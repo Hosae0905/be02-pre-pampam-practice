@@ -1,5 +1,6 @@
 package com.example.miniproject.user.model.entity;
 
+import com.example.miniproject.product.model.entity.Image;
 import com.example.miniproject.product.model.entity.Product;
 import com.example.miniproject.user.model.PostConsumerSignUpReq;
 import com.example.miniproject.user.model.PostSellerSignUpReq;
@@ -26,9 +27,13 @@ public class Seller {
     private String address;
     private String tel;
     private String businessNumber;
+    private String authority;
 
     @OneToMany(mappedBy = "seller")
     List<Product> products = new ArrayList<>();
+
+    @OneToMany(mappedBy = "sellerInfo")
+    List<Image> imageList = new ArrayList<>();
 
     public static Seller dtoToEntity(PostSellerSignUpReq sellerSignUpReq) {
         return Seller.builder()
@@ -38,6 +43,7 @@ public class Seller {
                 .address(sellerSignUpReq.getAddress())
                 .tel(sellerSignUpReq.getTel())
                 .businessNumber(sellerSignUpReq.getBusinessNumber())
+                .authority("USER_SELLER")
                 .build();
     }
 }

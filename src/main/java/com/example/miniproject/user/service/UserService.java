@@ -1,5 +1,6 @@
 package com.example.miniproject.user.service;
 
+import com.example.miniproject.config.PasswordEncoderConfig;
 import com.example.miniproject.product.model.GetProductRes;
 import com.example.miniproject.product.model.entity.Product;
 import com.example.miniproject.user.model.PostConsumerLoginReq;
@@ -11,6 +12,8 @@ import com.example.miniproject.user.model.entity.Seller;
 import com.example.miniproject.user.repository.ConsumerRepository;
 import com.example.miniproject.user.repository.SellerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,11 +22,14 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
+
     private final ConsumerRepository consumerRepository;
     private final SellerRepository sellerRepository;
+    private final PasswordEncoderConfig passwordEncoder;
 
     public void consumerSignUp(PostConsumerSignUpReq consumerSignUpReq) {
+        passwordEncoder.passwordEncoder().encode(consumerSignUpReq.getPassword());
         consumerRepository.save(Consumer.dtoToEntity(consumerSignUpReq));
     }
 
@@ -72,7 +78,13 @@ public class UserService {
 
     }
 
-//    public void update() {
-//
-//    }
+    @Override
+    public Consumer loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<Consumer> consumer = consumerRepository.findByUsername(username);
+
+        if (consumer.isPresent()) {
+            return consumer.get();
+        }
+        return null;
+    }
 }
