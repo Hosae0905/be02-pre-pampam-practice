@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Builder
@@ -31,8 +33,11 @@ public class Product {
     @JoinColumn(name = "Category_Id")
     private Category category;
 
+    @OneToMany(mappedBy = "product")
+    List<Image> imageList = new ArrayList<>();
 
     public static Product dtoToEntity(PostRegisterProductReq registerProductReq) {
+
         return Product.builder()
                 .name(registerProductReq.getName())
                 .price(registerProductReq.getPrice())
